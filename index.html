@@ -50,13 +50,15 @@
     }
 
     th, td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #e2e8f0;
+      padding: 6px 8px;
+      border-bottom: 1px solid #d8e2ef;
       font-feature-settings: "tnum" 1;
+      font-size: 0.92rem;
+      white-space: nowrap;
     }
 
     th {
-      background: #f1f5f9;
+      background: #f8fafc;
       text-align: left;
       font-weight: 700;
       color: #334155;
@@ -190,7 +192,8 @@
         result.textContent = `${a} + ${b} + ${c} = ${total}`;
         row.appendChild(result);
 
-        if (Math.abs(x - total) < Number.EPSILON) {
+        const tolerance = 1e-9;
+        if (Math.abs(x - total) < tolerance) {
           row.classList.add('match');
         } else {
           row.classList.remove('match');
