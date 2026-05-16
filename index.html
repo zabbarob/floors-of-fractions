@@ -192,16 +192,14 @@
     }
 
     function initializeRows() {
-      appendRows(5);
       const visibleRows = getVisibleRows();
-      const extraRows = Math.max(5, Math.ceil(visibleRows / 3));
-      appendRows(visibleRows + extraRows - 5);
+      appendRows(visibleRows + 10);
     }
 
     function handleScroll() {
       const { scrollTop, clientHeight, scrollHeight } = tableContainer;
-      if (scrollTop + clientHeight > scrollHeight - rowBuffer * 30) {
-        appendRows(chunkSize);
+      if (scrollHeight - (scrollTop + clientHeight) < 300) {
+        appendRows(10);
       }
     }
 
