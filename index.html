@@ -56,7 +56,7 @@
       white-space: nowrap;
     }
 
-    th:nth-child(1), td:nth-child(1), th:nth-child(4), td:nth-child(4), th:nth-child(7), td:nth-child(7) {
+    th:nth-child(1), td:nth-child(1), th:nth-child(4), td:nth-child(4) {
       border-right: 1px solid #e2e8f0;
     }
 
@@ -113,7 +113,7 @@
 <body>
   <h1>Floors of fractions</h1>
   <p class="note">Inspired by <a href="https://youtu.be/hfzxkHGME50" target="_blank" rel="noopener">https://youtu.be/hfzxkHGME50</a></p>
-  <p class="note small">Vibe coded with GitHub Copilot</p>
+  <p class="note small">Vibe coded with GitHub Copilot (Raptor mini (Preview))</p>
   <div id="tableContainer">
     <table>
       <thead>
@@ -122,9 +122,6 @@
           <th>x/2</th>
           <th>x/3</th>
           <th>x/5</th>
-          <th>⌊x/2⌋</th>
-          <th>⌊x/3⌋</th>
-          <th>⌊x/5⌋</th>
           <th>⌊x/2⌋ + ⌊x/3⌋ + ⌊x/5⌋</th>
         </tr>
       </thead>
@@ -173,20 +170,8 @@
       cellC.textContent = formatFraction(x / 5);
       row.appendChild(cellC);
 
-      const floorA = document.createElement('td');
-      floorA.textContent = a;
-      row.appendChild(floorA);
-
-      const floorB = document.createElement('td');
-      floorB.textContent = b;
-      row.appendChild(floorB);
-
-      const floorC = document.createElement('td');
-      floorC.textContent = c;
-      row.appendChild(floorC);
-
       const resultCell = document.createElement('td');
-      resultCell.textContent = total;
+      resultCell.textContent = `${a} + ${b} + ${c}`;
       row.appendChild(resultCell);
 
       if (Math.abs(x - total) < tolerance) {
