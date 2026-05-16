@@ -185,11 +185,9 @@
     function getVisibleRows() {
       const firstRow = rows.querySelector('tr');
       const header = document.querySelector('thead');
-      if (!firstRow || !header) {
-        return 5;
-      }
-      const rowHeight = firstRow.getBoundingClientRect().height || 24;
-      const headerHeight = header.getBoundingClientRect().height || 0;
+      const estimatedRowHeight = 25;
+      const rowHeight = firstRow ? firstRow.getBoundingClientRect().height || estimatedRowHeight : estimatedRowHeight;
+      const headerHeight = header ? header.getBoundingClientRect().height || 0 : 0;
       const availableHeight = Math.max(0, tableContainer.clientHeight - headerHeight);
       return Math.max(5, Math.floor(availableHeight / rowHeight));
     }
