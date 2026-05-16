@@ -194,10 +194,13 @@
 
     function initializeRows() {
       appendRows(5);
+      while (tableContainer.scrollHeight <= tableContainer.clientHeight) {
+        appendRows(5);
+      }
+
       const visibleRows = getVisibleRows();
-      const targetRows = visibleRows + 10;
       const currentRows = rows.querySelectorAll('tr').length;
-      appendRows(Math.max(0, targetRows - currentRows));
+      appendRows(Math.max(0, visibleRows + 10 - currentRows));
     }
 
     function handleScroll() {
