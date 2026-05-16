@@ -129,7 +129,7 @@
     const rows = document.getElementById('rows');
 
     function formatValue(value) {
-      const text = value.toFixed(6).replace(/(?:\.\d+?)0+$/, '$1').replace(/\.$/, '');
+      const text = value.toFixed(6).replace(/(\.\d+?)0+$/, '$1').replace(/\.$/, '');
       return text;
     }
 
