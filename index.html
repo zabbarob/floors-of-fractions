@@ -193,8 +193,11 @@
     }
 
     function initializeRows() {
+      appendRows(5);
       const visibleRows = getVisibleRows();
-      appendRows(visibleRows + 10);
+      const targetRows = visibleRows + 10;
+      const currentRows = rows.querySelectorAll('tr').length;
+      appendRows(Math.max(0, targetRows - currentRows));
     }
 
     function handleScroll() {
