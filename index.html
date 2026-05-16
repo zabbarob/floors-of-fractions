@@ -56,6 +56,10 @@
       white-space: nowrap;
     }
 
+    tbody tr {
+      cursor: pointer;
+    }
+
     th:nth-child(1), td:nth-child(1), th:nth-child(4), td:nth-child(4) {
       border-right: 1px solid #e2e8f0;
     }
@@ -85,6 +89,14 @@
 
     tbody tr:last-child td {
       border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #f8fafc;
+    }
+
+    .selected {
+      background: #e2e8f0;
     }
 
     .summary {
@@ -178,7 +190,20 @@
         row.classList.add('match');
       }
 
+      row.addEventListener('pointerup', (event) => {
+        event.stopPropagation();
+        clearSelection();
+        row.classList.add('selected');
+      });
+
       rows.appendChild(row);
+    }
+
+    function clearSelection() {
+      const selected = rows.querySelector('tr.selected');
+      if (selected) {
+        selected.classList.remove('selected');
+      }
     }
 
     function appendRows(count) {
@@ -215,6 +240,12 @@
         appendRows(10);
       }
     }
+
+    document.addEventListener('pointerup', (event) => {
+      if (!event.target.closest('#rows tr')) {
+        clearSelection();
+      }
+    });
 
     tableContainer.addEventListener('scroll', handleScroll);
     initializeRows();
