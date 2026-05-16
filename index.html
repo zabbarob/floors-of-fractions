@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Floor Sum Calculator</title>
+  <title>Floors of fractions</title>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -16,37 +16,26 @@
       margin: 0 0 16px;
     }
 
-    .controls {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 12px 16px;
-      align-items: center;
-      max-width: 480px;
-      margin-bottom: 20px;
-    }
-
-    label {
-      font-weight: 600;
-    }
-
-    input {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font: inherit;
-      box-sizing: border-box;
-      background: white;
+    #tableContainer {
+      max-height: 85vh;
+      overflow-y: auto;
+      margin-top: 16px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 16px;
       background: white;
       box-shadow: 0 2px 16px rgba(15, 23, 42, 0.08);
       border-radius: 14px;
       overflow: hidden;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #f8fafc;
+      z-index: 1;
     }
 
     th, td {
@@ -102,112 +91,96 @@
   </style>
 </head>
 <body>
-  <h1>Floor sum formula</h1>
-  <p class="summary">Calculate <strong>⌊x/2⌋ + ⌊x/3⌋ + ⌊x/5⌋</strong> for a sequence of real values starting at <strong>x = 0</strong>.</p>
-
-  <div class="controls">
-    <label for="increment">Increment</label>
-    <input id="increment" type="number" min="0.001" step="0.001" value="1" />
-
-    <label for="steps">Number of steps</label>
-    <input id="steps" type="number" min="1" step="1" value="100" />
+  <h1>Floors of fractions</h1>
+  <div id="tableContainer">
+    <table>
+      <thead>
+        <tr>
+          <th>x</th>
+          <th>x/2</th>
+          <th>x/3</th>
+          <th>x/5</th>
+          <th>⌊x/2⌋ + ⌊x/3⌋ + ⌊x/5⌋</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
   </div>
 
-  <p class="note">Change either value to update the rows immediately.</p>
-
-  <table>
-    <thead>
-      <tr>
-        <th>x</th>
-        <th>⌊x/2⌋</th>
-        <th></th>
-        <th>⌊x/3⌋</th>
-        <th></th>
-        <th>⌊x/5⌋</th>
-        <th></th>
-        <th>Result</th>
-      </tr>
-    </thead>
-    <tbody id="rows"></tbody>
-  </table>
-
   <script>
-    const incrementInput = document.getElementById('increment');
-    const stepsInput = document.getElementById('steps');
     const rows = document.getElementById('rows');
+    const tableContainer = document.getElementById('tableContainer');
 
-    function formatValue(value) {
-      const text = value.toFixed(6).replace(/(\.\d+?)0+$/, '$1').replace(/\.$/, '');
-      return text;
+    let nextX = 0;
+    const rowBuffer = 15;
+    const chunkSize = 50;
+    const initialLoad = 100;
+    const tolerance = 1e-9;
+
+    function formatFraction(value) {
+      return value.toFixed(3);
     }
 
     function floorValue(value) {
       return Math.floor(value);
     }
 
-    function render() {
-      const increment = parseFloat(incrementInput.value) || 0.1;
-      const steps = Math.max(1, parseInt(stepsInput.value, 10) || 1);
-      rows.innerHTML = '';
+    function createRow(x) {
+      const a = floorValue(x / 2);
+      const b = floorValue(x / 3);
+      const c = floorValue(x / 5);
+      const total = a + b + c;
 
-      for (let index = 0; index < steps; index += 1) {
-        const x = index * increment;
-        const a = floorValue(x / 2);
-        const b = floorValue(x / 3);
-        const c = floorValue(x / 5);
-        const total = a + b + c;
+      const row = document.createElement('tr');
 
-        const row = document.createElement('tr');
+      const cellX = document.createElement('td');
+      cellX.textContent = x;
+      row.appendChild(cellX);
 
-        const cellX = document.createElement('td');
-        cellX.textContent = `x=${formatValue(x)}`;
-        row.appendChild(cellX);
+      const cellA = document.createElement('td');
+      cellA.textContent = formatFraction(x / 2);
+      row.appendChild(cellA);
 
-        const cellA = document.createElement('td');
-        cellA.textContent = `⌊${formatValue(x / 2)}⌋`;
-        row.appendChild(cellA);
+      const cellB = document.createElement('td');
+      cellB.textContent = formatFraction(x / 3);
+      row.appendChild(cellB);
 
-        const plus1 = document.createElement('td');
-        plus1.className = 'center';
-        plus1.textContent = '+';
-        row.appendChild(plus1);
+      const cellC = document.createElement('td');
+      cellC.textContent = formatFraction(x / 5);
+      row.appendChild(cellC);
 
-        const cellB = document.createElement('td');
-        cellB.textContent = `⌊${formatValue(x / 3)}⌋`;
-        row.appendChild(cellB);
+      const formulaCell = document.createElement('td');
+      formulaCell.textContent = `${a} + ${b} + ${c}`;
+      row.appendChild(formulaCell);
 
-        const plus2 = document.createElement('td');
-        plus2.className = 'center';
-        plus2.textContent = '+';
-        row.appendChild(plus2);
+      const resultCell = document.createElement('td');
+      resultCell.textContent = total;
+      row.appendChild(resultCell);
 
-        const cellC = document.createElement('td');
-        cellC.textContent = `⌊${formatValue(x / 5)}⌋`;
-        row.appendChild(cellC);
+      if (Math.abs(x - total) < tolerance) {
+        row.classList.add('match');
+      }
 
-        const equals = document.createElement('td');
-        equals.className = 'center';
-        equals.textContent = '=';
-        row.appendChild(equals);
+      rows.appendChild(row);
+    }
 
-        const result = document.createElement('td');
-        result.textContent = `${a} + ${b} + ${c} = ${total}`;
-        row.appendChild(result);
-
-        const tolerance = 1e-9;
-        if (Math.abs(x - total) < tolerance) {
-          row.classList.add('match');
-        } else {
-          row.classList.remove('match');
-        }
-
-        rows.appendChild(row);
+    function appendRows(count) {
+      for (let i = 0; i < count; i += 1) {
+        createRow(nextX);
+        nextX += 1;
       }
     }
 
-    incrementInput.addEventListener('input', render);
-    stepsInput.addEventListener('input', render);
-    render();
+    function handleScroll() {
+      const { scrollTop, clientHeight, scrollHeight } = tableContainer;
+      if (scrollTop + clientHeight > scrollHeight - rowBuffer * 30) {
+        appendRows(chunkSize);
+      }
+    }
+
+    tableContainer.addEventListener('scroll', handleScroll);
+    appendRows(initialLoad);
   </script>
 </body>
 </html>
