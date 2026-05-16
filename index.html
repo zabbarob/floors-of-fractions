@@ -126,7 +126,6 @@
     let nextX = 0;
     const rowBuffer = 15;
     const chunkSize = 50;
-    const initialLoad = 100;
     const tolerance = 1e-9;
 
     function formatFraction(value) {
@@ -183,6 +182,22 @@
       }
     }
 
+    function getVisibleRows() {
+      const firstRow = rows.querySelector('tr');
+      if (!firstRow) {
+        return 5;
+      }
+      const rowHeight = firstRow.getBoundingClientRect().height || 24;
+      return Math.max(5, Math.floor(tableContainer.clientHeight / rowHeight));
+    }
+
+    function initializeRows() {
+      appendRows(5);
+      const visibleRows = getVisibleRows();
+      const extraRows = Math.max(5, Math.ceil(visibleRows / 3));
+      appendRows(visibleRows + extraRows - 5);
+    }
+
     function handleScroll() {
       const { scrollTop, clientHeight, scrollHeight } = tableContainer;
       if (scrollTop + clientHeight > scrollHeight - rowBuffer * 30) {
@@ -191,7 +206,7 @@
     }
 
     tableContainer.addEventListener('scroll', handleScroll);
-    appendRows(initialLoad);
+    initializeRows();
   </script>
 </body>
 </html>
